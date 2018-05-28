@@ -1,0 +1,11 @@
+#main{
+    display: flex
+}
+
+.cat{
+
+}
+
+.cat img{
+    max-width: 150px;
+}
