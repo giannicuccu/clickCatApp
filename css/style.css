@@ -9,3 +9,7 @@
 .cat img{
     max-width: 150px;
 }
+
+#catlist a{
+    cursor: pointer;
+}
