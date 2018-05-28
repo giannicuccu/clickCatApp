@@ -1,6 +1,6 @@
  let myCats = ['micio','zoi','spike'];
 
- const CatApp = (function(appCats){
+  const CatApp = ( function(appCats){
 
     const cats = [];
     console.log(this);
@@ -23,18 +23,18 @@
             img.setAttribute("data-id",this.id);
             img.addEventListener('click',()=>{this.updateClick()})
             div.appendChild(img);
-            let p = document.createElement('p');
-            p.textContent = '0';            
-            div.appendChild(p);
+            let counter = document.createElement('p');
+            counter.textContent = '0';
+            div.appendChild(counter);
     
-    parentEl.appendChild(div);    
-    this.p = p;
+    parentEl.appendChild(div);
+    this.counter = counter;
     }
 
 
     Cat.prototype.updateClick = function(){
         this.clickTotal++;
-        this.p.innerText = this.clickTotal;
+        this.counter.innerText = this.clickTotal;
     }
 
 
