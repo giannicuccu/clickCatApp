@@ -1,139 +1,147 @@
- let myCats = ['micio','zoi','spike','tex','gatto'];
+ let myCats = ['micio', 'zoi', 'spike', 'tex', 'gatto'];
 
-  const CatApp = (function(appCats){
-      
+ const CatApp = (function (appCats) {
 
-    const model = {
 
-        cats: [],
-        activeCat:{},
+     const model = {
+         cats: []
+     }
 
-        init: (catNames) => {
-            catNames.forEach((catName,i) => {            
-                let cat =  new Cat(catName,i);
-                model.cats.push(cat);          
+     const octopus = {
+
+         activeCat:{},
+
+         initModel: (catNames) => {
+            catNames.forEach((catName, i) => {
+                let cat = new Cat(catName, i);
+                model.cats.push(cat);
             });
-        },
+         },
 
-        setActiveCat: (cat) => {
-            model.activeCat = {};
-            model.activeCat = cat;
-        },
+         initSidebar: () => {
+             catList = model.cats;
+             view.sidebar.initSidebar(catList);
+             // THIS MOVES EVENT LISTENERS IN OCTOPUS
+             // [...document.getElementsByClassName('catLink')].forEach((cat)=>{
+             //     console.log(cat);
+             //     cat.addEventListener('click',(e)=>{
+             //         //console.log(e.target.getAttribute('data-id'))
+             //         octopus.showCat(catList[e.target.getAttribute('data-id')])
+             //     });
+             // })
+         },
 
-        getActiveCat: () => {
-            return model.activeCat;           
-        },
+         initCatViewer: () => {
+             view.catViewer.initCatViewer();
+         },
 
-        saveModel: ()=>{
+         showCat: (cat) => {
+             octopus.setActiveCat(cat);
+             view.catViewer.showCat(octopus.getActiveCat());
+         },
 
-        },
+         addClick: (cat) => {
+             cat.updateClick();
+             view.catViewer.showCat(octopus.getActiveCat());
+         },
 
-        loadModel: () =>{
+         setActiveCat: (cat) => {
+             octopus.activeCat = {};
+             octopus.activeCat = cat;
+         },
 
-        }
-    }
+         getActiveCat: () => {
+             return octopus.activeCat;
+         },
 
-    const octopus = {
+         saveModel: () => {
 
-        initModel: (catNames) => {
-            model.init(catNames)
-        },
+         },
 
-        initSidebar: () => {
-            catList = model.cats;
-            view.sidebar.initSidebar(catList)
-        },
+         loadModel: () => {
 
-        initCatViewer: () => {
-            view.catViewer.initCatViewer();
-        },
+         }
+     }
 
-        showCat: (cat) => {
-            model.setActiveCat(cat);
-            view.catViewer.showCat(model.getActiveCat());
-        },
+     const view = {
 
-        addClick: (cat) => {
-            cat.updateClick();
-            view.catViewer.showCat(model.getActiveCat());            
-        }
+         sidebar: {
+             initSidebar: (cats) => {
 
-    }
+                 let parentEl = document.getElementById('catlist');
+                 cats.forEach((cat) => {
+                     let listEl = document.createElement("LI");
+                     let listElLink = document.createElement("A");
+                     listElLink.setAttribute("data-id", cat.id);
+                     listElLink.setAttribute("class", "catLink");
+                     listElLink.textContent = cat.name /*+' - '*/ ;
+                     listElLink.addEventListener('click', (e) => {
+                         octopus.showCat(cat)
+                     });
+                     let listElLinkSpan = document.createElement("SPAN");
+                     listElLinkSpan.textContent = cat.clickTotal;
+                     //listElLink.appendChild(listElLinkSpan);
+                     listEl.appendChild(listElLink);
+                     parentEl.appendChild(listEl);
 
-    const view = {
+                     // INTERESTING - WORKS
+                     //cat.sideTotal = listElLinkSpan; // SAVE THE REFERENCE OF THE DOME ELEMENT AS A PROPERTY IN THE CAT OBJECT
 
-        sidebar: {
-            initSidebar: (cats) => {
-               
-                let parentEl = document.getElementById('catlist');
-                cats.forEach((cat) => {
-                    let listEl = document.createElement("LI");
-                    let listElLink = document.createElement("A");
-                        listElLink.setAttribute("data-id", cat.id);
-                        listElLink.textContent = cat.name/*+' - '*/;
-                        listElLink.addEventListener('click',(e)=>{octopus.showCat(cat)});
-                    let listElLinkSpan = document.createElement("SPAN");
-                        listElLinkSpan.textContent = cat.clickTotal;
-                        //listElLink.appendChild(listElLinkSpan);
-                    listEl.appendChild(listElLink);
-                    parentEl.appendChild(listEl);
+                 });
 
-                    // INTERESTING - WORKS
-                    //cat.sideTotal = listElLinkSpan; // SAVE THE REFERENCE OF THE DOME ELEMENT AS A PROPERTY IN THE CAT OBJECT
-                    
-                });
-    
-            }
-        },
+             }
+         },
 
-        catViewer:{
+         catViewer: {
 
-           initCatViewer: () => {
-               console.log('cat wiewer init')
-            },
+             initCatViewer: () => {
+                 console.log('cat wiewer init')
+             },
 
-           showCat: (cat) => {
-            console.log(cat)
-            let parentEl = document.getElementById('main');
-            parentEl.innerHTML = ''; // CLEAN VIEWER AND REMOVE EVENT LISTENERS
-            let div = document.createElement("DIV"); 
-            div.setAttribute('ID','cat-'+cat.id);
-            div.setAttribute('class','cat');
-            let img = document.createElement("IMG");
-            img.setAttribute("SRC",'/img/'+cat.name+'.jpg');
-            img.setAttribute("data-id",this.id); 
-            img.addEventListener('click',(e)=>{octopus.addClick(cat)});
-            div.appendChild(img);
-            let counter = document.createElement('p');
-             counter.textContent = cat.name+' - '+cat.clickTotal;
-             div.appendChild(counter);
-             parentEl.appendChild(div);
-            }
+             showCat: (cat) => {
+                 console.log(cat)
+                 let parentEl = document.getElementById('main');
+                 parentEl.innerHTML = ''; // CLEAN VIEWER AND REMOVE EVENT LISTENERS
+                 let div = document.createElement("DIV");
+                 div.setAttribute('ID', 'cat-' + cat.id);
+                 div.setAttribute('class', 'cat');
+                 let img = document.createElement("IMG");
+                 img.setAttribute("SRC", '/img/' + cat.imgUrl + '.jpg');
+                 img.setAttribute("data-id", this.id);
+                 img.addEventListener('click', (e) => {
+                     octopus.addClick(cat)
+                 });
+                 div.appendChild(img);
+                 let counter = document.createElement('p');
+                 counter.textContent = cat.name + ' - ' + cat.clickTotal;
+                 div.appendChild(counter);
+                 parentEl.appendChild(div);
+             }
 
-        }        
-        
-    }
+         }
 
-
-    const Cat = function (name,i) {
-        this.id = i;
-        this.name = name;
-        this.pic = name;
-        this.clickTotal = 0;
-        this.sideTotal = undefined;
-    }
-
-    Cat.prototype.updateClick = function(){
-        this.clickTotal++;
-        // INTERESTING - WORKS
-        //this.sideTotal.innerText = this.clickTotal; // update the DOM element using the reference saved as cat object property
-    }
+     }
 
 
+     const Cat = function (name, i) {
+         this.id = i;
+         this.name = name;
+         this.imgUrl = name;
+         this.clickTotal = 0;
+         this.sideTotal = undefined;
+     }
 
-    octopus.initModel(appCats);
-    octopus.initSidebar();
-    octopus.initCatViewer();
+     Cat.prototype.updateClick = function () {
+         this.clickTotal++;
+         // INTERESTING - WORKS
+         //this.sideTotal.innerText = this.clickTotal; // update the DOM element using the reference saved as cat object property
+     }
 
 
-})(myCats);
+
+     octopus.initModel(appCats);
+     octopus.initSidebar();
+     octopus.initCatViewer();
+
+
+ })(myCats);
