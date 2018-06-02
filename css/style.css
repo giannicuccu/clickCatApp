@@ -8,8 +8,10 @@
 
 .cat img{
     max-width: 150px;
+    cursor: pointer;
 }
 
 #catlist a{
     cursor: pointer;
 }
+
