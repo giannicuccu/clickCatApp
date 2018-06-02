@@ -70,11 +70,11 @@
                     let listEl = document.createElement("LI");
                     let listElLink = document.createElement("A");
                         listElLink.setAttribute("data-id", cat.id);
-                        listElLink.textContent = cat.name+' - ';
+                        listElLink.textContent = cat.name/*+' - '*/;
                         listElLink.addEventListener('click',(e)=>{octopus.showCat(cat)});
                     let listElLinkSpan = document.createElement("SPAN");
                         listElLinkSpan.textContent = cat.clickTotal;
-                        listElLink.appendChild(listElLinkSpan);
+                        //listElLink.appendChild(listElLinkSpan);
                     listEl.appendChild(listElLink);
                     parentEl.appendChild(listEl);
 
@@ -102,7 +102,7 @@
             let img = document.createElement("IMG");
             img.setAttribute("SRC",'/img/'+cat.name+'.jpg');
             img.setAttribute("data-id",this.id); 
-            img.addEventListener('click',(e)=>{octopus.addClick(cat)});               
+            img.addEventListener('click',(e)=>{octopus.addClick(cat)});
             div.appendChild(img);
             let counter = document.createElement('p');
              counter.textContent = cat.name+' - '+cat.clickTotal;
