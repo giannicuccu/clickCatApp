@@ -7,6 +7,8 @@
          cats: []
      }
 
+
+
      const octopus = {
 
          activeCat:{},
@@ -21,14 +23,11 @@
          initSidebar: () => {
              catList = model.cats;
              view.sidebar.initSidebar(catList);
-             // THIS MOVES EVENT LISTENERS IN OCTOPUS
-             // [...document.getElementsByClassName('catLink')].forEach((cat)=>{
-             //     console.log(cat);
-             //     cat.addEventListener('click',(e)=>{
-             //         //console.log(e.target.getAttribute('data-id'))
-             //         octopus.showCat(catList[e.target.getAttribute('data-id')])
-             //     });
-             // })
+         },
+
+         renderSidebar: () => {
+            catList = model.cats;
+            view.sidebar.renderSidebar(catList);
          },
 
          initCatViewer: () => {
@@ -54,15 +53,29 @@
              return octopus.activeCat;
          },
 
-         saveModel: () => {
+         updateCat: (cat,eventTarget)=>{
+            // console.log('UPDATING');
+            // console.dir(cat);
+            let name = eventTarget[1].value || cat.name;
+            let imgUrl = eventTarget[2].value || cat.imgUrl;
+            let clickTotal = eventTarget[3].value || cat.clickTotal;
 
+            cat.updateCat(name,imgUrl,clickTotal);
+            octopus.showCat(cat);
+            octopus.renderSidebar();
+         },
+
+         saveModel: () => {
+            // TODO:
          },
 
          loadModel: () => {
-
+            // TODO:
          }
      }
 
+
+     
      const view = {
 
          sidebar: {
@@ -89,6 +102,29 @@
 
                  });
 
+             },
+
+             renderSidebar: (cats) =>{
+                let parentEl = document.getElementById('catlist');
+                parentEl.innerHTML = '';
+                cats.forEach((cat) => {
+                    let listEl = document.createElement("LI");
+                    let listElLink = document.createElement("A");
+                    listElLink.setAttribute("data-id", cat.id);
+                    listElLink.setAttribute("class", "catLink");
+                    listElLink.textContent = cat.name /*+' - '*/ ;
+                    listElLink.addEventListener('click', (e) => {
+                        octopus.showCat(cat)
+                    });
+                    let listElLinkSpan = document.createElement("SPAN");
+                    listElLinkSpan.textContent = cat.clickTotal;
+                    //listElLink.appendChild(listElLinkSpan);
+                    listEl.appendChild(listElLink);
+                    parentEl.appendChild(listEl);
+
+                    // INTERESTING - WORKS
+                    //cat.sideTotal = listElLinkSpan; // SAVE THE REFERENCE OF THE DOME ELEMENT AS A PROPERTY IN THE CAT OBJECT
+                })
              }
          },
 
@@ -116,19 +152,59 @@
                  counter.textContent = cat.name + ' - ' + cat.clickTotal;
                  div.appendChild(counter);
                  parentEl.appendChild(div);
+                 let editbtn = document.createElement("button");
+                 editbtn.setAttribute("value", this.id);
+                 editbtn.innerText ='edit';
+                 editbtn.addEventListener('click', (e) => {
+                    view.showEditForm(cat)
+                });
+                 parentEl.appendChild(editbtn);
              }
 
+         },
+
+          showEditForm : (cat)=>{
+            view.removeEditForm();
+            let parentEl = document.getElementById('main');
+            let form = document.createElement("FORM");
+            form.setAttribute('id','editform');
+            for (const prop in cat) {
+                if (cat.hasOwnProperty(prop)) {
+                //   console.log(`cat.${prop} = ${cat[prop]}`);
+                  let inputEl = document.createElement('input');
+                        inputEl.setAttribute("type", 'text');
+                        inputEl.setAttribute('placeholder',cat[prop]);
+                        form.appendChild(inputEl)
+                } 
+              }
+              let saveBtn = document.createElement('button');
+                  saveBtn.innerText ='Save';
+                  saveBtn.setAttribute("type", 'submit');
+                  form.addEventListener('submit',(e)=>{ e.preventDefault(); console.log(e.target.elements); octopus.updateCat(cat,e.target.elements) });
+              let closeBtn = document.createElement('button');
+                  closeBtn.innerText ='Close';
+                  closeBtn.addEventListener('click',(e)=>{ e.preventDefault(); view.removeEditForm() });
+              form.appendChild(saveBtn);
+              form.appendChild(closeBtn);
+              parentEl.appendChild(form);
+         },
+
+         removeEditForm : () => {
+            let form = document.getElementById('editform');
+            form ? form.remove(): false;
          }
 
      }
 
 
+
+     // THE CAT OBJECT 
      const Cat = function (name, i) {
          this.id = i;
          this.name = name;
          this.imgUrl = name;
          this.clickTotal = 0;
-         this.sideTotal = undefined;
+         
      }
 
      Cat.prototype.updateClick = function () {
@@ -136,6 +212,14 @@
          // INTERESTING - WORKS
          //this.sideTotal.innerText = this.clickTotal; // update the DOM element using the reference saved as cat object property
      }
+
+     Cat.prototype.updateCat = function (name,imgUrl,clickTotal) {
+        this.name = name;
+        this.imgUrl = imgUrl;
+        this.clickTotal = clickTotal;
+        // INTERESTING - WORKS
+        //this.sideTotal.innerText = this.clickTotal; // update the DOM element using the reference saved as cat object property
+    }
 
 
 
